@@ -102,7 +102,7 @@ namespace URDF
             foreach (ComponentOccurrence oCompOccur in oAsmCompDef.Occurrences)
             {
                 Link temp = new Link(oCompOccur);
-                temp.visual = new Link.Visual(new Geometry(new Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
+                temp.visual = new Link.Visual(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
                 if (oCompOccur.ContactSet)
                 {
                     dynamic doc = oCompOccur.Definition.Document;
@@ -122,7 +122,7 @@ namespace URDF
 
                     if (temp.collision == null)
                     {
-                        temp.collision = new Link.Collision(new Geometry(new Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
+                        temp.collision = new Link.Collision(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
                     }
                 }
                 Links.Add(temp);
@@ -208,5 +208,7 @@ namespace URDF
 
         public override string ToString() { return " xyz:" + xyz + "| rpy:" + rpy; }
     }
-
 }
+
+
+    

@@ -52,7 +52,108 @@ namespace URDF
         [XmlIgnore]
         public dynamic inventorComponent;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public class Geometry
+        {
+            public Geometry() { }
 
+            public Geometry(Shape Shape) { shape = Shape; }
+
+            [XmlElement("box", Type = typeof(Shape.Box))]
+            [XmlElement("cylinder", Type = typeof(Shape.Cylinder))]
+            [XmlElement("sphere", Type = typeof(Shape.Sphere))]
+            [XmlElement("mesh", Type = typeof(Shape.Mesh))]
+            public Shape shape;
+
+            [Serializable]
+            [XmlInclude(typeof(Cylinder))]
+            [XmlInclude(typeof(Box))]
+            [XmlInclude(typeof(Sphere))]
+            [XmlInclude(typeof(Mesh))]
+            public class Shape
+            {
+                public Shape() { }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                [Serializable, XmlRoot("box")]
+                public class Box : Shape
+                {
+                    [XmlAttribute("size")]
+                    public double[] Size = new double[3];
+
+                    public Box()
+                    {
+                    }
+                    /// <summary>
+                    /// 
+                    /// </summary>
+                    /// <param name="size">Extents of the box.</param>
+                    public Box(double[] size)
+                    {
+                        Size = size;
+                    }
+                }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                [Serializable, XmlRoot("cylinder")]
+                public class Cylinder : Shape
+                {
+                    [XmlAttribute("radius")]
+                    public double Radius;
+                    [XmlAttribute("length")]
+                    public double Length;
+
+                    public Cylinder() { }
+
+                    public Cylinder(double radius, double length)
+                    {
+                        Radius = radius;
+                        Length = length;
+                    }
+                }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                [Serializable, XmlRoot("sphere")]
+                public class Sphere : Shape
+                {
+                    [XmlAttribute("radius")]
+                    public double Radius;
+
+                    public Sphere() { }
+
+                }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                [Serializable]
+                public class Mesh : Shape
+                {
+                    [XmlAttribute("filename")]
+                    public string Filename;
+
+                    public Mesh() { }
+
+                    public Mesh(string filename)
+                    {
+                        Filename = filename;
+                    }
+
+                    public Mesh(string filename, double scalein)
+                    {
+                        Filename = filename;
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Link inertial properties.
         /// </summary>
