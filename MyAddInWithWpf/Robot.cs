@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2017 Richard Vallett
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,28 +24,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
-using System.Xml.Schema;
-using System.Globalization;
 using Inventor;
 using System.Xml.Serialization;
 
 namespace URDF
 {
-
-    public static class StringUtil
-    {
-        public static string JoinFormat<T>(this IEnumerable<T> list, string separator,
-                                   string formatString)
-        {
-            formatString = string.IsNullOrWhiteSpace(formatString) ? "{0}" : "{0:" + formatString + "}";
-            return string.Join(separator,
-                                 list.Select(item => string.Format(CultureInfo.InvariantCulture, formatString, item)));
-        }
-    }
-
     #region Robot
     /// <summary>
     /// Defines the URDF Robot model.
@@ -102,7 +87,7 @@ namespace URDF
             foreach (ComponentOccurrence oCompOccur in oAsmCompDef.Occurrences)
             {
                 Link temp = new Link(oCompOccur);
-                temp.visual = new Link.Visual(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
+                temp.visual = new Link.Visual(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
                 if (oCompOccur.ContactSet)
                 {
                     dynamic doc = oCompOccur.Definition.Document;
@@ -122,7 +107,7 @@ namespace URDF
 
                     if (temp.collision == null)
                     {
-                        temp.collision = new Link.Collision(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "/meshes/" + temp.Name + ".stl")));
+                        temp.collision = new Link.Collision(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
                     }
                 }
                 Links.Add(temp);
@@ -188,26 +173,7 @@ namespace URDF
         }
     }
 
-    #endregion
-
-    /// <summary>
-    /// Link and Joint origin properties.
-    /// </summary>
-    [Serializable]
-    public class Origin
-    {
-        [XmlIgnore]
-        public double[] XYZ { get; set; }
-        [XmlIgnore]
-        public double[] RPY { get; set; }
-
-        [XmlAttribute]
-        public string xyz { get { return XYZ?.JoinFormat(" ", "0.###"); } set { XYZ = value.Split(' ').Select(x => double.Parse(x, CultureInfo.InvariantCulture)).ToArray(); } }
-        [XmlAttribute]
-        public string rpy { get { return RPY?.JoinFormat(" ", "0.###"); } set { RPY = value.Split(' ').Select(x => double.Parse(x, CultureInfo.InvariantCulture)).ToArray(); } }
-
-        public override string ToString() { return " xyz:" + xyz + "| rpy:" + rpy; }
-    }
+#endregion
 }
 
 

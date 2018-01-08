@@ -37,11 +37,26 @@ namespace URDFConverter
         Inventor.Application _invApp;
         bool _started = false;
 
+        public Form1(Inventor.Application invApp, string addinCLS)
+        {
+            InitializeComponent();
+
+            #region Get Inventor session
+            try
+            {
+                _invApp = invApp;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Unable to get or start Inventor");
+            }
+        }
 
         public Form1()
         {
             InitializeComponent();
-
+            
             #region Get Inventor session
             try
             {
@@ -123,12 +138,6 @@ namespace URDFConverter
 
         Robot robot;
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-           
-            
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             if (_invApp.Documents.Count == 0)
@@ -163,7 +172,9 @@ namespace URDFConverter
             lod_simple = repman.LevelOfDetailRepresentations["Collision"];
 
             lod_master.Activate();
-            robot = new Robot("autoturf_pilot_model", oAsmCompDef);
+            robot = new Robot(oAsmDoc.DisplayName, oAsmCompDef);
+
+            textBox1.Text = oAsmDoc.DisplayName;
 
             dataGridView1.AutoGenerateColumns = false;
             dataGridView2.AutoGenerateColumns = false;
@@ -199,8 +210,19 @@ namespace URDFConverter
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if (robot.Name != textBox1.Text)
+            {
+                lod_master.Activate();
+                robot = new Robot(textBox1.Text, oAsmCompDef);
+            }
             Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\urdf");
             robot.WriteURDFFile(Directory.GetCurrentDirectory() + "\\urdf\\" + robot.Name + ".urdf");
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
+#endregion

@@ -53,19 +53,21 @@ namespace URDFConverter
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.NameLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.InertiaLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.NameJoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Parent = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Child = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.XYZ_joint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.RPY_joint = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Axis = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NameLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.InertiaLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -102,6 +104,19 @@ namespace URDFConverter
             this.dataGridView1.Size = new System.Drawing.Size(538, 429);
             this.dataGridView1.TabIndex = 4;
             // 
+            // NameLink
+            // 
+            this.NameLink.HeaderText = "Name";
+            this.NameLink.Name = "NameLink";
+            this.NameLink.ReadOnly = true;
+            // 
+            // InertiaLink
+            // 
+            this.InertiaLink.HeaderText = "Inertial";
+            this.InertiaLink.Name = "InertiaLink";
+            this.InertiaLink.ReadOnly = true;
+            this.InertiaLink.Width = 300;
+            // 
             // dataGridView2
             // 
             this.dataGridView2.AllowUserToAddRows = false;
@@ -119,46 +134,6 @@ namespace URDFConverter
             this.dataGridView2.ReadOnly = true;
             this.dataGridView2.Size = new System.Drawing.Size(617, 429);
             this.dataGridView2.TabIndex = 5;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 472);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(169, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Load Inventor assembly";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(188, 472);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(161, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Make STL\'s";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(355, 472);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(161, 23);
-            this.button3.TabIndex = 8;
-            this.button3.Text = "Make xacro";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(522, 472);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(161, 23);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Make urdf";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // NameJoint
             // 
@@ -196,24 +171,69 @@ namespace URDFConverter
             this.Axis.Name = "Axis";
             this.Axis.ReadOnly = true;
             // 
-            // NameLink
+            // button1
             // 
-            this.NameLink.HeaderText = "Name";
-            this.NameLink.Name = "NameLink";
-            this.NameLink.ReadOnly = true;
+            this.button1.Location = new System.Drawing.Point(12, 472);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(169, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Load Inventor assembly";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // InertiaLink
+            // button2
             // 
-            this.InertiaLink.HeaderText = "Inertial";
-            this.InertiaLink.Name = "InertiaLink";
-            this.InertiaLink.ReadOnly = true;
-            this.InertiaLink.Width = 300;
+            this.button2.Location = new System.Drawing.Point(188, 472);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(161, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "Make STL\'s";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(845, 472);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(161, 23);
+            this.button3.TabIndex = 8;
+            this.button3.Text = "Make xacro";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(1012, 472);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(161, 23);
+            this.button4.TabIndex = 9;
+            this.button4.Text = "Make urdf";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(490, 475);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(349, 20);
+            this.textBox1.TabIndex = 10;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(373, 478);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(111, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Robot name overwrite";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1185, 555);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -249,6 +269,8 @@ namespace URDFConverter
         private System.Windows.Forms.DataGridViewTextBoxColumn Axis;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameLink;
         private System.Windows.Forms.DataGridViewTextBoxColumn InertiaLink;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label3;
     }
 }
 
