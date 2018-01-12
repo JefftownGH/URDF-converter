@@ -61,7 +61,7 @@ namespace URDF
             MakeLinks(drawing);
             MakeJoints(drawing);
 
-            List<Link> roots = this.Links.Except(this.Joints.Select(x => x.Child.refff)).ToList();
+            List<Link> roots = this.Links.Except(this.Joints.Select(x => x.Child.linkreference)).ToList();
 
             this.Joints.Add(new Joint("baselink", Joint.JointType.Fixed, roots[0], roots[1]));
         }

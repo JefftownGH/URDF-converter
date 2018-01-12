@@ -62,9 +62,9 @@ namespace URDF
         public class Reference
         {
             [XmlIgnore]
-            public Link refff;
+            public Link linkreference;
             [XmlAttribute]
-            public string link { get => refff.Name; set => refff.Name = value; }
+            public string link { get => linkreference.Name; set => linkreference.Name = value; }
 
             public override string ToString() { return "link:" + link; }
         } 
@@ -178,10 +178,17 @@ namespace URDF
 
         private string safename;
 
+        [XmlAttribute("name")]
+        public string Name { get => assemblyJoint == null ? safename : assemblyJoint.Name; set => safename = value; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
         private AssemblyJoint assemblyJoint;
 
         public Joint() { }
-
         public Joint(string name, JointType jointTypeIn)
         {
             Name = name;
@@ -195,7 +202,6 @@ namespace URDF
             Parent = new Reference();
             Child = new Reference();
         }
-
         public Joint(string name, JointType jointTypeIn, Link parent, Link child)
         {
             Name = name;
@@ -211,18 +217,17 @@ namespace URDF
             Parent = new Reference();
             Child = new Reference();
 
-            Parent.refff = parent;
-            Child.refff = child;
+            Parent.linkreference = parent;
+            Child.linkreference = child;
         }
-
         public Joint(AssemblyJoint ajoint, List<Link> links)
         {
             assemblyJoint = ajoint;
             Parent = new Reference();
             Child = new Reference();
 
-            Parent.refff = links.Find(x => x.Name == ajoint.OccurrenceTwo.Name);
-            Child.refff = links.Find(x => x.Name == ajoint.OccurrenceOne.Name);
+            Parent.linkreference = links.Find(x => x.Name == ajoint.OccurrenceTwo.Name);
+            Child.linkreference = links.Find(x => x.Name == ajoint.OccurrenceOne.Name);
             switch (ajoint.Definition.JointType)
             {
                 case AssemblyJointTypeEnum.kRigidJointType:
@@ -302,11 +307,6 @@ namespace URDF
             }           
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
-
         /// <summary>
         /// Clones the Joint object into a new object.
         /// </summary>
@@ -332,32 +332,33 @@ namespace URDF
             assemblyJoint.GetReferenceKey(ref ReferenceKey, KeyContext);
         }
 
+        [XmlIgnore]
         public ComponentOccurrence AffectedOccurrenceOne => assemblyJoint.AffectedOccurrenceOne;
-
+        [XmlIgnore]
         public ComponentOccurrence AffectedOccurrenceTwo => assemblyJoint.AffectedOccurrenceTwo;
-
+        [XmlIgnore]
         public dynamic Application => assemblyJoint.Application;
-
+        [XmlIgnore]
         public AttributeSets AttributeSets => assemblyJoint.AttributeSets;
 
         [XmlIgnore]
         public AssemblyJointDefinition Definition { get => assemblyJoint.Definition; set => assemblyJoint.Definition = value; }
-
+        [XmlIgnore]
         public DriveSettings DriveSettings => assemblyJoint.DriveSettings;
-
+        [XmlIgnore]
         public HealthStatusEnum HealthStatus => assemblyJoint.HealthStatus;
 
         [XmlIgnore]
         public bool Locked { get => assemblyJoint.Locked; set => assemblyJoint.Locked = value; }
         [XmlIgnore]
         public bool Protected { get => assemblyJoint.Protected; set => assemblyJoint.Protected = value; }
-
+        [XmlIgnore]
         public ComponentOccurrence OccurrenceOne => assemblyJoint.OccurrenceOne;
-
+        [XmlIgnore]
         public ComponentOccurrence OccurrenceTwo => assemblyJoint.OccurrenceTwo;
-
+        [XmlIgnore]
         AssemblyComponentDefinition AssemblyJoint.Parent => assemblyJoint.Parent;
-
+        [XmlIgnore]
         public ObjectTypeEnum Type => assemblyJoint.Type;
 
         [XmlIgnore]
@@ -399,9 +400,6 @@ namespace URDF
         {
             Definition.SetOriginTwoAsBetweenTwoFaces(ReferencedFaces);
         }
-
-        [XmlAttribute("name")]
-        public string Name { get => assemblyJoint == null ? safename : assemblyJoint.Name; set => safename = value; }
     }
 
 }

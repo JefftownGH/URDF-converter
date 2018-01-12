@@ -154,6 +154,7 @@ namespace URDF
                 }
             }
         }
+
         /// <summary>
         /// Link inertial properties.
         /// </summary>
@@ -407,7 +408,6 @@ namespace URDF
             inventorComponent.Replace(FileName, ReplaceAll);
         }
 
-
         public RenderStyle GetRenderStyle(out StyleSourceTypeEnum StyleSourceType)
         {
             return inventorComponent.GetRenderStyle(out StyleSourceType);
@@ -612,7 +612,4 @@ namespace URDF
     }
 }
 
-
 #endregion
-
-    
