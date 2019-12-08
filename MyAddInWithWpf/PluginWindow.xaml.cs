@@ -65,7 +65,7 @@ namespace InvAddIn
                 }
                 else
                 {
-                    _invApp.Documents.Open("D:\\Workspace\\AutoTurf4_CAD\\Version 4 - Komplet maskine.iam");
+                    _invApp.Documents.Open(Properties.Settings.Default.autoload_file);
                 }
             }
 
@@ -80,6 +80,11 @@ namespace InvAddIn
 
             lod_master.Activate();
             robot = new Robot(oAsmDoc.DisplayName, oAsmCompDef);
+
+            if (addbaselinkcheckbox.IsChecked == true)
+            {
+                addbaselink(ref robot, oAsmCompDef);
+            }
 
             textBox.Text = oAsmDoc.DisplayName.TrimEnd(".iam".ToCharArray());
 
@@ -98,6 +103,11 @@ namespace InvAddIn
             {
                 lod_master.Activate();
                 robot = new Robot(textBox.Text, oAsmCompDef);
+
+                if (addbaselinkcheckbox.IsChecked == true)
+                {
+                    addbaselink(ref robot, oAsmCompDef);
+                }
             }
 
             string folder = GetFolder();
@@ -107,6 +117,17 @@ namespace InvAddIn
             robot.WriteURDFFile(folder + "\\urdf\\" + robot.Name + ".urdf");
         }
 
+        private void addbaselink(ref Robot robot, AssemblyComponentDefinition oAsmCompDef)
+        {
+            Link base_link = new Link(oAsmCompDef.WorkPoints[1]);
+            base_link.Name = "base_link";
+
+            robot.Links.Add(base_link);
+
+            List<Link> roots = robot.Links.Except(robot.Joints.Select(x => x.child.linkreference)).ToList();
+
+            robot.Joints.Add(new Joint("base_link", Joint.JointType.Fixed, roots[1], roots[0]));
+        }
       
         private void button_Copy_Click(object sender, RoutedEventArgs e)
         {
@@ -116,6 +137,7 @@ namespace InvAddIn
 
             string folder = GetFolder();
 
+            Directory.CreateDirectory(folder);
             Directory.CreateDirectory(folder + "\\meshes");
             robot.WriteSTLFiles(folder + "\\meshes");
 

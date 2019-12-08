@@ -56,14 +56,9 @@ namespace URDF
         {
             Name = name;
 
-            this.Links.Add(new Link(drawing.WorkPoints[1]));
-
             MakeLinks(drawing);
             MakeJoints(drawing);
 
-            List<Link> roots = this.Links.Except(this.Joints.Select(x => x.Child.linkreference)).ToList();
-
-            this.Joints.Add(new Joint("baselink", Joint.JointType.Fixed, roots[0], roots[1]));
         }
 
         /// <summary>
@@ -154,6 +149,8 @@ namespace URDF
             TranslationContext stpcontext = _invApp.TransientObjects.CreateTranslationContext();
 
             NameValueMap stpoptions = _invApp.TransientObjects.CreateNameValueMap();
+
+            Links.Reverse();
 
             foreach (Link oAsmComp in Links.Skip(1))
             {

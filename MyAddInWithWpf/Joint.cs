@@ -66,7 +66,7 @@ namespace URDF
             [XmlAttribute]
             public string link { get => linkreference.Name; set => linkreference.Name = value; }
 
-            public override string ToString() { return "link:" + link; }
+            public override string ToString() { return "link: " + link; }
         } 
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace URDF
         [Serializable]
         public sealed class Calibration
         {
-            public static readonly Calibration Rising = new Calibration("rising", 0.0);
-            public static readonly Calibration Falling = new Calibration("falling", 0.0);
+            public static readonly Calibration rising = new Calibration("rising", 0.0);
+            public static readonly Calibration falling = new Calibration("falling", 0.0);
 
             private Calibration() { }
 
@@ -157,20 +157,20 @@ namespace URDF
             public double Value { get; set; }
         }
         #endregion
-
-        [XmlIgnore]
-        public Origin Origin { get; set; }
         [XmlAttribute("type")]
         public JointType jointType { get; set; }
         [XmlElement("parent")]
-        public Reference Parent { get; set; }
+        public Reference parent { get; set; }
         [XmlElement("child")]
-        public Reference Child { get; set; }
+        public Reference child { get; set; }
 
         public Limit limit { get; set; }
 
         [XmlElement("axis")]
-        public Origin Axis { get; set; }
+        public Origin axis { get; set; }
+
+        [XmlElement("origin")]
+        public Origin origin { get; set; }
 
         public Calibration calibration { get; set; }
         public Dynamics dynamics { get; set; }
@@ -186,6 +186,7 @@ namespace URDF
             return Name;
         }
 
+
         private AssemblyJoint assemblyJoint;
 
         public Joint() { }
@@ -199,10 +200,10 @@ namespace URDF
                 limit = new Limit(1.0, 30.0, 0.0, 180.0);
             }
 
-            Parent = new Reference();
-            Child = new Reference();
+            parent = new Reference();
+            child = new Reference();
         }
-        public Joint(string name, JointType jointTypeIn, Link parent, Link child)
+        public Joint(string name, JointType jointTypeIn, Link parentin, Link childin)
         {
             Name = name;
             jointType = jointTypeIn;
@@ -212,26 +213,41 @@ namespace URDF
                 limit = new Limit(1.0, 30.0, 0.0, 180.0);
             }
             //origin = new Origin() { XYZ = new double[] { . });
-            Point ost = parent.inventorComponent.Definition.Point();
-            Origin = new Origin() { XYZ = new double[] { ost.X, ost.Y, ost.Z } };
-            Parent = new Reference();
-            Child = new Reference();
+            Point ost = parentin.inventorComponent.Definition.Point();
+            origin = new Origin() { XYZ = new double[] { ost.X, ost.Y, ost.Z } };
+            parent = new Reference();
+            child = new Reference();
 
-            Parent.linkreference = parent;
-            Child.linkreference = child;
+            parent.linkreference = parentin;
+            child.linkreference = childin;
         }
+
+       
+
+
+
+
         public Joint(AssemblyJoint ajoint, List<Link> links)
         {
             assemblyJoint = ajoint;
-            Parent = new Reference();
-            Child = new Reference();
+            parent = new Reference();
+            child = new Reference();
 
-            Parent.linkreference = links.Find(x => x.Name == ajoint.OccurrenceTwo.Name);
-            Child.linkreference = links.Find(x => x.Name == ajoint.OccurrenceOne.Name);
+            parent.linkreference = links.Find(x => x.Name == ajoint.OccurrenceTwo.Name);
+            child.linkreference = links.Find(x => x.Name == ajoint.OccurrenceOne.Name);
+
+            origin = new Origin();
+
             switch (ajoint.Definition.JointType)
             {
                 case AssemblyJointTypeEnum.kRigidJointType:
                     jointType = JointType.Fixed;
+                    origin = TransformConverter.CalculateRotationAngles(ajoint.OccurrenceOne.Transformation, (Application)ajoint.Application);
+
+                    origin.RPY[0] = Math.Abs(origin.RPY[0]) > 0.01 ? origin.RPY[0] : 0;
+                    origin.RPY[1] = Math.Abs(origin.RPY[1]) > 0.01 ? origin.RPY[1] : 0;
+                    origin.RPY[2] = Math.Abs(origin.RPY[2]) > 0.01 ? origin.RPY[2] : 0;
+
                     break;
                 case AssemblyJointTypeEnum.kRotationalJointType:
                     try
@@ -239,26 +255,26 @@ namespace URDF
                         dynamic obj1 = null;
                         if (ajoint.Definition.OriginTwo != null)
                         {
-                            dynamic geometry = ajoint.Definition.OriginTwo.Geometry.Geometry;
+                            dynamic geometry = ajoint.Definition.OriginTwo.Geometry;
                             try
                             { 
-                                obj1 = geometry.AxisVector;
+                                obj1 = geometry.Geometry.AxisVector;
                             }
                             catch
                             {
-                                try { obj1 = geometry.Normal; } catch { }
+                                try { obj1 = geometry.Geometry.Normal; } catch { }
                             }
                         }
                         else if (ajoint.Definition.OriginOne != null)
                         {
-                            dynamic geometry = ajoint.Definition.OriginOne.Geometry.Geometry;
+                            dynamic geometry = ajoint.Definition.OriginOne.Geometry;
                             try
                             {
-                                obj1 = geometry.AxisVector;
+                                obj1 = geometry.Geometry.AxisVector;
                             }
                             catch
                             {
-                                try { obj1 = geometry.Normal; } catch { }
+                                try { obj1 = geometry.Geometry.Normal; } catch { }
                             }
                         }
                         else
@@ -269,11 +285,11 @@ namespace URDF
                         double y = Math.Abs(obj1.Y) > 0.035 ? obj1.Y : 0;
                         double z = Math.Abs(obj1.Z) > 0.035 ? obj1.Z : 0;
 
-                        Axis = new Origin() { XYZ = new double[] { x, y, z } };
+                        axis = new Origin() { XYZ = new double[] { x, y, z } };
                     }
                     catch(Exception e)
                     {
-                        Console.WriteLine("Could not find axis of rotation for " + Name);
+                        Console.WriteLine("Could not find axis of rotation for " + Name + "\n Exception: " + e.Message);
                     }
                    
 
@@ -281,7 +297,9 @@ namespace URDF
                     {
                         //Make revolute joint
                         jointType = JointType.Revolute;
-                        limit = new Limit(1, 30, ajoint.Definition.AngularPositionStartLimit.Value, ajoint.Definition.AngularPositionEndLimit.Value);
+                        dynamic limit1 = ajoint.Definition.AngularPositionStartLimit;
+                        dynamic limit2 = ajoint.Definition.AngularPositionEndLimit;
+                        limit = new Limit(1, 30, (double)limit1.Value, (double)limit2.Value);
                     }
                     else
                     {
@@ -297,14 +315,7 @@ namespace URDF
             Vector frame2 = ajoint.OccurrenceTwo.Transformation.Translation;
 
             frame1.SubtractVector(frame2);
-            if(Origin == null)
-            {
-                Origin = new Origin { XYZ = new double[] { frame1.X * 0.01, frame1.Y * 0.01, frame1.Z * 0.01 } };
-            }
-            else
-            {
-                Origin.XYZ = new double[] { frame1.X * 0.01, frame1.Y * 0.01, frame1.Z * 0.01 };
-            }           
+            origin.XYZ = new double[] { frame1.X * 0.01, frame1.Y * 0.01, frame1.Z * 0.01 };        
         }
 
         /// <summary>

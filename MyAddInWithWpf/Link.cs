@@ -61,6 +61,11 @@ namespace URDF
 
             public Geometry(Shape Shape) { shape = Shape; }
 
+            public override string ToString()
+            {
+                return "shape: " + shape.ToString();
+            }
+
             [XmlElement("box", Type = typeof(Shape.Box))]
             [XmlElement("cylinder", Type = typeof(Shape.Cylinder))]
             [XmlElement("sphere", Type = typeof(Shape.Sphere))]
@@ -267,8 +272,11 @@ namespace URDF
         /// Link visual properties.
         /// </summary>
         [Serializable, XmlRoot("geometry")]
-        public class Visual : Origin
+        public class Visual
         {
+            [XmlElement("origin")]
+            public Origin Origin { get; set; }
+
             [XmlElement("geometry")]
             public Geometry Geometry { get; set; }
             public Material Material { get; set; }
@@ -284,6 +292,11 @@ namespace URDF
             {
                 Geometry = geometry;
                 Material = material;
+            }
+
+            public override string ToString()
+            {
+                return "geometry: " + Geometry.ToString();
             }
 
         }
@@ -304,7 +317,12 @@ namespace URDF
                 Name = name;
                 ColorRGBA = colorRGBA;
             }
-            
+
+            public override string ToString()
+            {
+                return "name: " + Name.ToString();
+            }
+
         }
 
         /// <summary>
@@ -314,11 +332,11 @@ namespace URDF
         [XmlRoot("collision")]
         public class Collision
         {
-            [XmlElement("geometry")]
-            public Geometry geometry { get; set; }
-
             [XmlElement("origin")]
             public Origin Origin { get; set; }
+
+            [XmlElement("geometry")]
+            public Geometry geometry { get; set; }
 
             public Collision() { }
 
@@ -326,7 +344,12 @@ namespace URDF
             {
                 geometry = Geometry;
             }
-            
+
+            public override string ToString()
+            {
+                return "origin: " + Origin.ToString() + " | geometry: " + geometry.ToString();
+            }
+
         }
 
         public Link() { }
@@ -366,7 +389,7 @@ namespace URDF
         }
 
         [XmlAttribute("name")]
-        public string Name { get => inventorComponent == null ? safename : inventorComponent.Name; set => safename = value; }
+        public string Name { get => safename != null ? safename : inventorComponent.Name; set => safename = value; }
 
         public override string ToString()
         {
@@ -497,7 +520,7 @@ namespace URDF
         [XmlIgnore]
         public dynamic Application => inventorComponent.Application;
         [XmlIgnore]
-        public AssemblyComponentDefinition Parent => inventorComponent.Parent;
+        public AssemblyComponentDefinition parent => inventorComponent.parent;
         [XmlIgnore]
         public bool HasBodyOverride => inventorComponent.HasBodyOverride;
         [XmlIgnore]
@@ -509,7 +532,7 @@ namespace URDF
         [XmlIgnore]
         public DocumentTypeEnum DefinitionDocumentType => inventorComponent.DefinitionDocumentType;
         [XmlIgnore]
-        public ComponentOccurrence ParentOccurrence => inventorComponent.ParentOccurrence;
+        public ComponentOccurrence parentOccurrence => inventorComponent.parentOccurrence;
         [XmlIgnore]
         public ComponentOccurrencesEnumerator OccurrencePath => inventorComponent.OccurrencePath;
         [XmlIgnore]
@@ -609,6 +632,15 @@ namespace URDF
         public bool Transparent { get => inventorComponent.Transparent; set => inventorComponent.Transparent = value; }
         [XmlIgnore]
         public string AssociativeForeignFilename => inventorComponent.AssociativeForeignFilename;
+
+        public void Delete2(bool SkipDocumentSave = false)
+        {
+            parentOccurrence.Delete2(SkipDocumentSave);
+        }
+
+        public AssemblyComponentDefinition Parent => parentOccurrence.Parent;
+
+        public ComponentOccurrence ParentOccurrence => parentOccurrence.ParentOccurrence;
     }
 }
 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -27,7 +27,8 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\</OutputPath>
@@ -93,16 +94,28 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="WindowsBase" />
+    <Reference Include="Autodesk.Inventor.Interop, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>R:\XInterface\InventorSDK\Source\DeveloperTools\References\primaryinterop\CurrentVersion\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Joint.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Origin.cs" />
     <Compile Include="PluginWindow.xaml.cs">
       <DependentUpon>PluginWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Robot.cs" />
     <Compile Include="StandardAddInServer.cs">
@@ -110,6 +123,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="URDFplugin.X.manifest" />
   </ItemGroup>
   <ItemGroup>
@@ -122,15 +140,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="Inventor">
-      <Guid>{D98A091D-3A0F-4C3E-B36E-61F62068D488}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="stdole">
       <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>2</VersionMajor>
@@ -147,6 +156,9 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -155,7 +167,7 @@
 mt.exe -manifest "$(ProjectDir)URDFplugin.X.manifest" -outputresource:"$(TargetPath)";#2
 tlbexp.exe "$(ProjectDir)$(OutDir)$(TargetName)$(TargetExt)"
 
-copy $(TargetPath) "C:\Program Files\Autodesk\Inventor 2018\Bin"
-copy $(TargetDir)\Autodesk.URDFplugin.Inventor.addin "C:\ProgramData\Autodesk\Inventor 2018\Addins"</PostBuildEvent>
+copy $(TargetPath) "C:\Program Files\Autodesk\Inventor 2019\Bin"
+copy $(TargetDir)\Autodesk.URDFplugin.Inventor.addin "C:\ProgramData\Autodesk\Inventor 2019\Addins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,6 @@
+using Inventor;
 using System;
 using System.Runtime.InteropServices;
-using Inventor;
-using Microsoft.Win32;
 using System.Windows.Interop;
 
 namespace InvAddIn
@@ -12,14 +11,15 @@ namespace InvAddIn
     /// the AddIn is via the methods on this interface.
     /// </summary>
     [GuidAttribute("880b4435-f9c2-4c5e-b234-d543a20b5c36")]
-    public class StandardAddInServer : Inventor.ApplicationAddInServer
+    public class StandardAddInServer : ApplicationAddInServer
     {
 
         // Inventor application object.
-        private Inventor.Application m_inventorApplication;
-        private Inventor.ButtonDefinition m_btnDef;
+        private Application m_inventorApplication;
+        private ButtonDefinition m_btnDef;
+        private DockableWindow myDockableWindow;
 
-        private InvAddIn.PluginWindow wpfWindow;
+        private PluginWindow wpfWindow;
 
         public StandardAddInServer()
         {
@@ -51,7 +51,7 @@ namespace InvAddIn
             ribbons = m_inventorApplication.UserInterfaceManager.Ribbons;
 
             Inventor.Ribbon partRibbon;
-            partRibbon = ribbons["ZeroDoc"]; //replace with Assembly for final version
+            partRibbon = ribbons["Assembly"]; //replace with Assembly for final version
 
             //get the tabls associated with part ribbon
             RibbonTabs ribbonTabs;
@@ -74,21 +74,27 @@ namespace InvAddIn
             CommandControl drawSlotCmdBtnCmdCtrl;
             drawSlotCmdBtnCmdCtrl = partSketchSlotRibbonPanelCtrls.AddButton(m_btnDef, false, true, "", false);
 
-            CtrlDef_OnExecute(null);
+            //CtrlDef_OnExecute(null);
         }
 
         void CtrlDef_OnExecute(NameValueMap Context)
         {
-            wpfWindow = new InvAddIn.PluginWindow(m_inventorApplication, "{880b4435-f9c2-4c5e-b234-d543a20b5c36");
+            wpfWindow = new PluginWindow(m_inventorApplication, "{880b4435-f9c2-4c5e-b234-d543a20b5c36}");
 
             // Could be a good idea to set the owner for this window
             // especially if it was modeless as mentioned in this article:
-            //var helper = new WindowInteropHelper(wpfWindow);
+            var helper = new WindowInteropHelper(wpfWindow);
+            helper.EnsureHandle();
             //helper.Owner = new IntPtr(m_inventorApplication.MainFrameHWND);
-            wpfWindow.Show();
+            //wpfWindow.Show();
 
-            DockableWindow myDockableWindow = m_inventorApplication.UserInterfaceManager.DockableWindows.Add("{880b4435-f9c2-4c5e-b234-d543a20b5c36", "URDF", "URDF converter");
-            myDockableWindow.AddChild(new WindowInteropHelper(wpfWindow).Handle);
+            var uimanager = m_inventorApplication.UserInterfaceManager;
+
+            //Create window if missing
+            if(myDockableWindow == null)
+            {
+                myDockableWindow = uimanager.DockableWindows.Add("{880b4435-f9c2-4c5e-b234-d543a20b5c36}", "URDF", "URDF converter");
+            }
 
             if (!myDockableWindow.IsCustomized)
             {
@@ -96,9 +102,11 @@ namespace InvAddIn
                 myDockableWindow.Move(0, 0, myDockableWindow.Height, myDockableWindow.Width);
             }
 
+            myDockableWindow.AddChild(helper.Handle);
+
             wpfWindow.Show();
-            myDockableWindow.Visible = true;
-            wpfWindow.Show();
+            myDockableWindow.Visible = true; 
+            //wpfWindow.Show(); 
         }
 
         public void Deactivate()
