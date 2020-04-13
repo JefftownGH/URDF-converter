@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("URDFplugin")]
 [assembly: AssemblyDescription("URDFplugin")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Autodesk, Inc.")]
-[assembly: AssemblyProduct("Autodesk Inventor")]
-[assembly: AssemblyCopyright("Copyright ?2012 Autodesk, Inc.")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("URDF Converter")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
