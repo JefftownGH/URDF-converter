@@ -389,23 +389,30 @@ namespace URDF
 
             dynamic objDefinition = null;
 
-            switch (oCompOccur.Definition.Type)
+            try
             {
-                case ObjectTypeEnum.kPartComponentDefinitionObject:
-                    objDefinition = (PartComponentDefinition)oCompOccur.Definition;
-                    break;
-                case ObjectTypeEnum.kAssemblyComponentDefinitionObject:
-                    objDefinition = (AssemblyComponentDefinition)oCompOccur.Definition;
-                    break;
-                case ObjectTypeEnum.kWorkPointObject:
-                    objDefinition = (WorkPoint)oCompOccur.Definition;
-                    break;
-                default:
-                    Console.WriteLine("Unknown object type");
-                    break;
+                switch (oCompOccur.Definition.Type)
+                {
+                    case ObjectTypeEnum.kPartComponentDefinitionObject:
+                        objDefinition = (PartComponentDefinition)oCompOccur.Definition;
+                        break;
+                    case ObjectTypeEnum.kAssemblyComponentDefinitionObject:
+                        objDefinition = (AssemblyComponentDefinition)oCompOccur.Definition;
+                        break;
+                    case ObjectTypeEnum.kWorkPointObject:
+                        objDefinition = (WorkPoint)oCompOccur.Definition;
+                        break;
+                    default:
+                        Console.WriteLine("Unknown object type");
+                        break;
+                }
+                inertial = new Inertial(objDefinition.MassProperties);
             }
-
-            inertial = new Inertial(objDefinition.MassProperties);           
+            catch
+            {
+                throw new InvalidOperationException("Failed to find object type for component");
+            }
+       
         }
 
         [XmlAttribute("name")]

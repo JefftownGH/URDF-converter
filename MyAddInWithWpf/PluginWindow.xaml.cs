@@ -98,7 +98,6 @@ namespace InvAddIn
             //Change to master version for massproperties and joints
             repman = oAsmCompDef.RepresentationsManager;
             lod_master = repman.LevelOfDetailRepresentations["Master"];
-            lod_simple = repman.LevelOfDetailRepresentations["Collision"];
 
             lod_master.Activate();
             robot = new Robot(oAsmDoc.DisplayName, oAsmCompDef);
@@ -121,7 +120,7 @@ namespace InvAddIn
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            if (robot.Name != textBox.Text)
+            if (robot.Name != textBox.Text && oAsmCompDef != null && robot != default(Robot))
             {
                 lod_master.Activate();
                 robot = new Robot(textBox.Text, oAsmCompDef);
@@ -148,14 +147,28 @@ namespace InvAddIn
 
             List<Link> roots = robot.Links.Except(robot.Joints.Select(x => x.child.linkreference)).ToList();
 
-            robot.Joints.Add(new Joint("base_link", Joint.JointType.Fixed, roots[1], roots[0]));
+            try
+            {
+                robot.Joints.Add(new Joint("base_link", Joint.JointType.Fixed, roots[1], roots[0]));
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("There was a problem adding the base_link joint, please ensure the CAD assembly structure is correct");
+            }
         }
       
         private void button_Copy_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                lod_simple = repman.LevelOfDetailRepresentations["Collision"];
+                lod_simple.Activate();
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("There is no collision LevelOfDetail available, will export meshes from Master LOD");
+            }
             //Change to simple version for meshes
-            LevelOfDetailRepresentation lod_simple = repman.LevelOfDetailRepresentations["Collision"];
-            lod_simple.Activate();
 
             string folder = GetFolder();
 

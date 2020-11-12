@@ -233,19 +233,20 @@ namespace URDF
                 limit = new Limit(1.0, 30.0, 0.0, 180.0);
             }
             //origin = new Origin() { XYZ = new double[] { . });
-            Point ost = parentin.inventorComponent.Definition.Point();
-            origin = new Origin() { XYZ = new double[] { ost.X, ost.Y, ost.Z } };
+            try {
+                Point ost = parentin.inventorComponent.Definition.Point();
+                origin = new Origin() { XYZ = new double[] { ost.X, ost.Y, ost.Z } };
+            }
+            catch {
+                throw new InvalidOperationException("Could not get origin of component");
+            }
+            
             parent = new Reference();
             child = new Reference();
 
             parent.linkreference = parentin;
             child.linkreference = childin;
         }
-
-       
-
-
-
 
         public Joint(AssemblyJoint ajoint, List<Link> links)
         {

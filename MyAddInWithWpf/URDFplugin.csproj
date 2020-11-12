@@ -31,7 +31,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -55,7 +55,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\..\Bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -82,6 +82,11 @@
     <AssemblyName>URDFplugin</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autodesk.Inventor.Interop, Version=24.2.0.0, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Program Files\Autodesk\Inventor 2020\Bin\Public Assemblies\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -94,11 +99,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="WindowsBase" />
-    <Reference Include="Autodesk.Inventor.Interop, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>R:\XInterface\InventorSDK\Source\DeveloperTools\References\primaryinterop\CurrentVersion\Autodesk.Inventor.Interop.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -134,10 +134,10 @@
     <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Autodesk.URDFplugin.Inventor.addin">
+    <None Include="Autodesk.URDFplugin.Inventor.addinfff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
@@ -167,7 +167,7 @@
 mt.exe -manifest "$(ProjectDir)URDFplugin.X.manifest" -outputresource:"$(TargetPath)";#2
 tlbexp.exe "$(ProjectDir)$(OutDir)$(TargetName)$(TargetExt)"
 
-copy $(TargetPath) "C:\Program Files\Autodesk\Inventor 2019\Bin"
-copy $(TargetDir)\Autodesk.URDFplugin.Inventor.addin "C:\ProgramData\Autodesk\Inventor 2019\Addins"</PostBuildEvent>
+copy $(TargetPath) "C:\Program Files\Autodesk\Inventor 2020\Bin"
+copy $(TargetDir)\Autodesk.URDFplugin.Inventor.addin "C:\ProgramData\Autodesk\Inventor 2020\Addins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -101,31 +101,40 @@ namespace URDF
         {
             foreach (ComponentOccurrence oCompOccur in oAsmCompDef.Occurrences)
             {
-                Link temp = new Link(oCompOccur);
-                temp.visual = new Link.Visual(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
-                if (oCompOccur.ContactSet)
+                try
                 {
-                    dynamic doc = oCompOccur.Definition.Document;
-                    dynamic test = doc.PropertySets["Inventor User Defined Properties"];
-
-                    foreach (dynamic prop in test)
+                    Link temp = new Link(oCompOccur);
+                    temp.visual = new Link.Visual(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
+                    if (oCompOccur.ContactSet)
                     {
-                        if (prop.Name == "collision")
+                        dynamic doc = oCompOccur.Definition.Document;
+                        dynamic test = doc.PropertySets["Inventor User Defined Properties"];
+
+                        foreach (dynamic prop in test)
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof(Link.Collision));
-                            using (TextReader reader = new StringReader("<" + prop.Name + ">" + prop.Value + "</" + prop.Name + ">"))
+                            if (prop.Name == "collision")
                             {
-                                temp.collision = (Link.Collision)serializer.Deserialize(reader);
+                                XmlSerializer serializer = new XmlSerializer(typeof(Link.Collision));
+                                using (TextReader reader = new StringReader("<" + prop.Name + ">" + prop.Value + "</" + prop.Name + ">"))
+                                {
+                                    temp.collision = (Link.Collision)serializer.Deserialize(reader);
+                                }
                             }
+                        }
+
+                        if (temp.collision == null)
+                        {
+                            temp.collision = new Link.Collision(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
                         }
                     }
 
-                    if (temp.collision == null)
-                    {
-                        temp.collision = new Link.Collision(new Link.Geometry(new Link.Geometry.Shape.Mesh("package://" + Name + "_description/meshes/" + temp.Name + ".stl")));
-                    }
+                    Links.Add(temp);
                 }
-                Links.Add(temp);
+                catch
+                {
+                    System.Windows.MessageBox.Show("There was a problem adding link for component: " + oCompOccur.Name + ", please ensure the CAD assembly structure is correct");
+                    Console.WriteLine("Link could not be created for component");
+                }
             }
         }
         private void MakeJoints(AssemblyComponentDefinition oAsmCompDef)
